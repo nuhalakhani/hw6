@@ -453,20 +453,21 @@ void HashTable<K,V,Prober,Hash,KEqual>::resize()
   ++mIndex_;
   numInserts = 0;
   std::vector<HashItem*> temp;
-  for(auto& h: table_) {
-    if (h == nullptr) {
+  for(auto& item: table_) {
+    if (item == nullptr) {
       continue;
     }
-    if (h->deleted) {
-      delete h;
+    if (item->deleted) {
+      delete item;
     }
     else {
-      temp.push_back(h);
+      temp.push_back(item);
     }
   }
-  table_ = std::vector<HashItem*>(CAPACITIES[mIndex_], NULL);
-  for (auto& h : temp) {
-    table_[probe(h->item.first)] = h;
+  table_ = std::vector<HashItem*>(CAPACITIES[mIndex_], nullptr);
+  for (auto& item : temp) {
+    size_t index = probe(item->item.first);
+    table_[index] = item;
     ++numInserts;
   }
 }
